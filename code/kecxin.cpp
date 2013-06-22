@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream> 
 #include <stdlib.h>
 #include <string>
 using namespace std;
@@ -47,7 +48,8 @@ StuNode* creat_node(StuNode* list)
 {
     if(list)
     return NULL;
-    list=(StuNode*)malloc(sizeof(class StuNode));
+    //list=(StuNode*)malloc(sizeof(class StuNode));
+    list = new StuNode;
     list->head=NULL;
     list->tail=NULL;
     list->num=0;
@@ -56,7 +58,7 @@ StuNode* creat_node(StuNode* list)
 
 Student* Student::creat_stu()
 {
-   Student* node=(Student*)malloc(sizeof(class Student));
+   Student* node = new Student;
    if(!node)
   return NULL;
    cout<<"\t学号：";
@@ -227,7 +229,7 @@ int StuFun::aver_jg_yx(StuNode* list) //对学生信息进行分析
            cin>>major_name;
            m = strcmp( node->major,major_name );
        }
-       if(flag == 2) //按班对学生信息进行分析！  //有点问题 
+       if(flag == 2) //按班对学生信息进行分析！ 
        {
            cout<<"\t请输入班级名称：";
            cin>>class_name;
@@ -487,7 +489,7 @@ int StuFun::pm(StuNode* list)   //对学生成绩进行排名
 int StuFun::deleteStu(StuNode* list)
 {
        char name[10];
-       Student *node=list->head,*q=NULL;
+       Student *node=list->head,*find=NULL;
        cout<<"\t请输入你要删除学生姓名：";
        cin>>name; 
        if(node==NULL)
@@ -569,44 +571,49 @@ int StuFun::Free_Node(StuNode* list)                  //释放
     {
           list->tail = list->head;
           list->head = list->head->next;
-          free(list->tail);
+         delete list->tail;
     }
     
-    free(list);
+    delete list;
     return 0;
 }
 
 int StuFun::Read_File(StuNode* list)                           //读取文件信息
 {
-     FILE* fp;
-     Student* p = (Student*)malloc(sizeof(class Student));
+     Student* p = new Student;
      
-     if((fp = fopen("data","rb")) == NULL)      //打开文件 
-            return -1;
-      
-     while(fread(p,sizeof(class Student),1,fp))
-     {
+    ifstream infile("E:\\output.txt", ios::in);  
+    if(infile.is_open() == true)  
+    {  
+        while(infile.eof() == false)  
+        {  
             p->next = NULL;
             Add_info(list,p);
-            p = (Student*)malloc(sizeof(class Student));
-     }
-     
-	 fclose(fp);
+            p = (Student*)malloc(sizeof(class Student)); 
+        }  
+    }  
+  
+    infile.close();  
+    
 	 return 0;
 }
 
 void Write_File(StuNode* list)            //写入文件 
 {
 	Student* p = list->head;
-    FILE* fp = fopen("data","wb");
-
-	while(p)
-	{
-	   fwrite(p,sizeof(class Student),1,fp);
-	   p = p -> next; 
-	}
-	
-	fclose(fp);
+ 
+    ofstream outfile("E:\\output.txt", ios::out);  
+    if(outfile.is_open() == true)  
+    {  
+        while(p)
+	    {
+            outfile << p << endl;  
+            p = p -> next;
+        }
+    }  
+  
+    outfile.close();  
+    
 }
 
 
